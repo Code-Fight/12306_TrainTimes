@@ -81,10 +81,11 @@ namespace FTools.HTTP
             HttpResults result = new HttpResults();
             try
             {
-                //准备参数
+                //配置请求参数
                 SetRequest(objHttpItems);
 
                 #region 得到请求的response
+
                 result.CookieCollection = new CookieCollection();
                 response = (HttpWebResponse)request.GetResponse();
 
@@ -113,7 +114,7 @@ namespace FTools.HTTP
                 }
                 MemoryStream _stream = new MemoryStream();
                 //GZIIP处理
-                if (response.ContentEncoding != null && response.ContentEncoding.Equals("gzip", StringComparison.InvariantCultureIgnoreCase))
+                if (response.ContentEncoding.Equals("gzip", StringComparison.InvariantCultureIgnoreCase))
                 {
                     _stream = GetMemoryStream(new GZipStream(response.GetResponseStream(), CompressionMode.Decompress));
                 }
@@ -130,18 +131,18 @@ namespace FTools.HTTP
                     result.ResultByte = RawResponse;
                     return result;
                 }
-                //无视编码
+                //无视编码--自动识别编码
                 if (objHttpItems.Encoding == null)
                 {
                     string temp = Encoding.Default.GetString(RawResponse, 0, RawResponse.Length);
                     //<meta(.*?)charset([\s]?)=[^>](.*?)>
                     Match meta = Regex.Match(temp, "<meta([^<]*)charset=([^<]*)[\"']", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                     string charter = (meta.Groups.Count > 2) ? meta.Groups[2].Value : string.Empty;
-                    if (charter.IndexOf("\"") > 0)
+                    if (charter.IndexOf("\"", StringComparison.Ordinal) > 0)
                     {
                         charter = charter.Split('\"')[0];
                     }
-                    if (charter.IndexOf(" ") > 0)
+                    if (charter.IndexOf(" ", StringComparison.Ordinal) > 0)
                     {
                         charter = charter.Split(' ')[0];
                     }
@@ -149,7 +150,7 @@ namespace FTools.HTTP
                     if (charter.Length > 0)
                     {
                         charter = charter.ToLower().Replace("iso-8859-1", "gbk");
-                        if (string.IsNullOrEmpty(response.CharacterSet.Trim()) || response.CharacterSet.Trim().Contains("utf8"))
+                        if (response.CharacterSet != null && (string.IsNullOrEmpty(response.CharacterSet.Trim()) || response.CharacterSet.Trim().Contains("utf8")))
                         {
                             objHttpItems.Encoding = Encoding.UTF8;
                         }
