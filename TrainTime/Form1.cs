@@ -33,7 +33,7 @@ namespace TrainTime
         private void Station_AutoComplete()
         {
             
-            //TODO:this
+            //TODO:测试
             TrainStationBll trainStationBll=new TrainStationBll();
             list_trianstation = trainStationBll.GetAllStation();
             txt_station_name.AutoCompleteCustomSource.AddRange(trainStationBll.GetStationNameArry(list_trianstation));
