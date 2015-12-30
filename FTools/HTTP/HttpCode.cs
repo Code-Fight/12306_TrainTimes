@@ -523,11 +523,11 @@ namespace FTools.HTTP
                 string temp = Encoding.Default.GetString(RawResponse, 0, RawResponse.Length);
                 Match meta = Regex.Match(temp, "<meta([^<]*)charset=([^<]*)[\"']", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 string charter = (meta.Groups.Count > 2) ? meta.Groups[2].Value : string.Empty;
-                if (charter.IndexOf("\"") > 0)
+                if (charter.IndexOf("\"", StringComparison.Ordinal) > 0)
                 {
                     charter = charter.Split('\"')[0];
                 }
-                if (charter.IndexOf(" ") > 0)
+                if (charter.IndexOf(" ", StringComparison.Ordinal) > 0)
                 {
                     charter = charter.Split(' ')[0];
                 }
@@ -933,6 +933,7 @@ namespace FTools.HTTP
             return byteArrayToImage(hr.ResultByte);
 
         }
+
         /// <summary>
         /// 字节数组生成图片
         /// </summary>
